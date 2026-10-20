@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+      Parent ("aggregator") POM. It produces no jar itself (packaging = pom). It has two jobs:
+        1. List the modules, so running `mvn verify` here builds every module in dependency order.
+        2. Hold the shared rules (Java version, library versions, plugin versions) that every module inherits.
+    -->
+    <groupId>dev.harsh.miniredis</groupId>
+    <artifactId>miniredis-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>MiniRedis</name>
+    <description>A Redis-compatible in-memory key-value store written from scratch in Java.</description>
+
+    <!-- Other modules (client, starter, demo-app, dashboard) are added in the phase that needs them. -->
+    <modules>
+        <module>miniredis-server</module>
+    </modules>
+
+    <properties>
+        <!-- `release` rather than source/target: besides the language level and bytecode version, it also
+             rejects any JDK API newer than 21. So code compiled on a newer local JDK still runs on Java 21. -->
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <junit.version>5.14.4</junit.version>
+    </properties>
+
+    <!-- dependencyManagement only decides VERSIONS. It adds nothing to any module's classpath;
+         a module still has to declare the dependency itself (without a version). -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- JUnit is several artifacts (api, engine, params, platform launcher) that must share one version.
+                 A BOM ("bill of materials") is a POM that pins all of them at once, so they can't drift apart. -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <!-- Pin plugin versions so the build behaves the same on every machine and every Maven install,
+             instead of using whatever default version the local Maven happens to ship with. -->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.5.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.16.0</version>
+                </plugin>
+                <!-- Surefire runs the unit tests during the `test` phase. -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.6.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.5.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>

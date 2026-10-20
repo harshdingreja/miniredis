@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Links this module to the root pom.xml, so it inherits Java 21, plugin versions and the JUnit version.
+         No <relativePath> needed: Maven looks in ../pom.xml by default, which is exactly where the parent is. -->
+    <parent>
+        <groupId>dev.harsh.miniredis</groupId>
+        <artifactId>miniredis-parent</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+
+    <!-- Only the artifactId: groupId and version are inherited from the parent. -->
+    <artifactId>miniredis-server</artifactId>
+
+    <name>MiniRedis Server</name>
+    <description>TCP server speaking RESP2. Zero runtime dependencies.</description>
+
+    <dependencies>
+        <!-- No <version>: the JUnit BOM in the parent's dependencyManagement decides it.
+             test scope: on the classpath only while tests compile and run, never inside the server jar. -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
